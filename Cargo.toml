@@ -3,6 +3,16 @@ name = "op_agent"
 version = "0.1.0"
 authors = ["Jean"]
 edition = "2018"
+build = "build.rs"
 
 [dependencies]
 winreg = "0.6.2"
+
+[build-dependencies]
+winres = "0.1.11"
+
+[package.metadata.winres]
+OriginalFilename = "OP Agent.exe"
+LegalCopyright = "Copyright © 2019"
+FileDescription = "Agent Software Tool"
+CompanyName = "Boo Productions"
