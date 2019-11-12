@@ -9,8 +9,8 @@ fn regreadvalue (regpath: &str, regvalue: &str, mut inifile: &std::fs::File) {
 
     let subkey = hklm.open_subkey_with_flags(regpath, KEY_READ)
                     .expect("Failed to open subkey");
-    let thevalue: String = subkey.get_value(regvalue)
-                    .expect("Failed to read product name");
+                    
+    let thevalue: String = subkey.get_value(regvalue).unwrap_or_default();
 
     let iniline: String = format!("{}\\{}={}\n", regpath, regvalue, thevalue);
     let binaryiniline = iniline.as_bytes();
