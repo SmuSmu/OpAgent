@@ -36,6 +36,8 @@ fn main() -> std::io::Result<()> {
     regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "EditionID", &inifile);
     regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ReleaseId", &inifile);
     regreadvalue(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid", &inifile);
+    regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName", &inifile);
+    regreadvalue(r#"SYSTEM\CurrentControlSet\Services\TcpipParameters"#, "Domain", &inifile);
     
     Ok(())
 }
