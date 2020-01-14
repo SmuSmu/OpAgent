@@ -1,17 +1,18 @@
 extern crate winreg;
 
-use winreg::enums::{RegType, HKEY_LOCAL_MACHINE, KEY_READ};
-use winreg::types::FromRegValue;
+use winreg::enums::{HKEY_LOCAL_MACHINE, KEY_READ};
 use std::fs::File;
 use std::io::prelude::*;
 
 fn display_reg_value(rv: &winreg::RegValue) -> String {
+    use winreg::enums::RegType::*;
+    use winreg::types::FromRegValue;
     match rv.vtype {
-        RegType::REG_SZ | RegType::REG_EXPAND_SZ | RegType::REG_MULTI_SZ => {
+        REG_SZ | REG_EXPAND_SZ | REG_MULTI_SZ => {
             String::from_reg_value(rv).unwrap_or_default()
         }
-        RegType::REG_DWORD => u32::from_reg_value(rv).unwrap_or_default().to_string(),
-        RegType::REG_QWORD => u64::from_reg_value(rv).unwrap_or_default().to_string(),
+        REG_DWORD => u32::from_reg_value(rv).unwrap_or_default().to_string(),
+        REG_QWORD => u64::from_reg_value(rv).unwrap_or_default().to_string(),
         _ => panic!("can only process reg value of type string, u32 or u64"),
     }
 }
