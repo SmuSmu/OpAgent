@@ -1,7 +1,7 @@
 extern crate winreg;
 
 use winreg::enums::{HKEY_LOCAL_MACHINE, KEY_READ};
-use std::io::prelude::*;
+use std::io::prelude::Write;
 
 fn display_reg_value(rv: &winreg::RegValue) -> String {
     use winreg::enums::RegType::*;
