@@ -59,5 +59,7 @@ fn main() -> std::io::Result<()> {
     regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSReleaseDate", &inifile);
     regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "EnclosureType", &inifile);
 
+    regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "REG_BINARY", &inifile);
+
     Ok(())
 }
