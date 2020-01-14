@@ -1,7 +1,6 @@
 extern crate winreg;
 
 use winreg::enums::{HKEY_LOCAL_MACHINE, KEY_READ};
-use std::fs::File;
 use std::io::prelude::*;
 
 fn display_reg_value(rv: &winreg::RegValue) -> String {
@@ -42,7 +41,7 @@ fn regreadvalue(regpath: &str, regvalue: &str, mut inifile: &std::fs::File) {
 
 fn main() -> std::io::Result<()> {
 
-    let mut inifile = File::create("output.ini")?;
+    let mut inifile = std::fs::File::create("output.ini")?;
     inifile.write_all(b"[FileInfo]\n")?;
     inifile.write_all(b"Version=1\n")?;
     inifile.write_all(b"[Machine]\n")?;
