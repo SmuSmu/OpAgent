@@ -11,7 +11,7 @@ fn display_reg_value(rv: &winreg::RegValue) -> String {
         REG_NONE                            => "REG_NONE".to_string(),
         REG_SZ                              => String::from_reg_value(rv).unwrap_or_default(),
         REG_EXPAND_SZ                       => String::from_reg_value(rv).unwrap_or_default(),
-        REG_MULTI_SZ                        => "REG_MULTI_SZ".to_string(),
+        REG_MULTI_SZ                        => String::from_reg_value(rv).unwrap_or_default().replace(&['\r', '\n', '\t'][..], " "),
         REG_DWORD                           => u32::from_reg_value(rv).unwrap_or_default().to_string(),
         REG_QWORD                           => u64::from_reg_value(rv).unwrap_or_default().to_string(),
         REG_BINARY                          => hex::encode(rv.bytes.iter().map(|&c| c as char).collect::<String>()), // This works but not as wanted for Example Ä should return c4 instead it is c384 So it seems to be UTF-8 (hex). Also I miss Spaces
@@ -33,7 +33,7 @@ fn regreadvalue(regpath: &str, regvalue: &str, mut inifile: &std::fs::File) {
         }
         Err(_) => "".to_string(),
     };
-    let iniline = format!("{}\\{}={}\n", regpath, regvalue, thevalue);
+    let iniline = format!("{}\\{}={}\n", regpath, regvalue, thevalue.trim());
     let binaryiniline = iniline.as_bytes();
     inifile
         .write_all(binaryiniline)
@@ -61,6 +61,7 @@ fn main() -> std::io::Result<()> {
     regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "EnclosureType", &inifile);
 
     regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "REG_BINARY", &inifile);
+    regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "REG_MULTI_SZ", &inifile);
 
     Ok(())
 }
