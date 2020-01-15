@@ -14,7 +14,7 @@ fn display_reg_value(rv: &winreg::RegValue) -> String {
         REG_MULTI_SZ                        => "REG_MULTI_SZ".to_string(),
         REG_DWORD                           => u32::from_reg_value(rv).unwrap_or_default().to_string(),
         REG_QWORD                           => u64::from_reg_value(rv).unwrap_or_default().to_string(),
-        REG_BINARY                          => rv.bytes.iter().map(|&c| c as char).collect::<String>(),
+        REG_BINARY                          => hex::encode(rv.bytes.iter().map(|&c| c as char).collect::<String>()), // This works but not as wanted for Example Ä should return c4 instead it is c384 So it seems to be UTF-8 (hex). Also I miss Spaces
         REG_DWORD_BIG_ENDIAN                => "REG_DWORD_BIG_ENDIAN".to_string(),
         REG_LINK                            => "REG_LINK".to_string(),
         REG_RESOURCE_LIST                   => "REG_RESOURCE_LIST".to_string(),
