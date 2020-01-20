@@ -7,13 +7,12 @@ build = "build.rs"
 
 [package.metadata.winres]
 OriginalFilename = "OP Agent.exe"
-LegalCopyright = "Copyright © 2019"
+LegalCopyright = "Copyright © 2020"
 FileDescription = "Agent Software Tool"
 CompanyName = "Boo Productions"
 
 [dependencies]
 winreg = "0.6.2"
-hex = "0.4.0"
 
 [build-dependencies]
 winres = "0.1.11"

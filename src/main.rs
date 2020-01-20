@@ -1,5 +1,4 @@
 extern crate winreg;
-extern crate hex;
 
 use winreg::enums::{HKEY_LOCAL_MACHINE, KEY_READ};
 use std::io::prelude::Write;
