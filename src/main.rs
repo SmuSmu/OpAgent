@@ -48,6 +48,27 @@ fn regreadvalue(regpath: &str, regvalue: &str, mut inifile: &std::fs::File) {
         .expect("could not write line");
 }
 
+fn regkeyloop(regpath: &str, inifile: &std::fs::File) {
+    let subkey = winreg::RegKey::predef(HKEY_LOCAL_MACHINE)
+        .open_subkey_with_flags(regpath, KEY_READ)
+        .unwrap();
+    for name in subkey.enum_keys().map(|x| x.unwrap()) {
+        //println!("{}", name);
+        regvalloop(format!("{}\\{}", regpath, name).as_str(), &inifile);
+    }
+}
+
+fn regvalloop(regpath: &str, inifile: &std::fs::File) {
+    let subkey = winreg::RegKey::predef(HKEY_LOCAL_MACHINE)
+        .open_subkey_with_flags(regpath, KEY_READ)
+        .unwrap();
+    for (name, _value) in subkey.enum_values().map(|x| x.unwrap()) {
+        //println!("{}={}", regpath, name);
+        regreadvalue(regpath, name.as_str(), &inifile);
+    }
+}
+
+
 fn main() -> std::io::Result<()> {
 
     let mut inifile = std::fs::File::create("output.ini")?;
@@ -70,6 +91,10 @@ fn main() -> std::io::Result<()> {
 
     regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "REG_BINARY", &inifile);
     regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "REG_MULTI_SZ", &inifile);
+    inifile.write_all(b"[Software]\n")?;
+    regkeyloop(r#"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"#, &inifile);
+    inifile.write_all(b"[Software_WOW6432Node]\n")?;
+    regkeyloop(r#"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"#, &inifile);
 
     Ok(())
 }
