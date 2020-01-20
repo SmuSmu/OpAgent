@@ -4,6 +4,15 @@ extern crate hex;
 use winreg::enums::{HKEY_LOCAL_MACHINE, KEY_READ};
 use std::io::prelude::Write;
 
+fn bytes_to_hex (input: &winreg::RegValue) -> String
+{
+    let mut output: String = "".to_string();
+    for x in &input.bytes {
+        output = format!("{} {}", output, format!("{:02x}", x));
+    }
+    return output.trim().to_string();
+}
+
 fn display_reg_value(rv: &winreg::RegValue) -> String {
     use winreg::enums::RegType::*;
     use winreg::types::FromRegValue;
@@ -14,7 +23,7 @@ fn display_reg_value(rv: &winreg::RegValue) -> String {
         REG_MULTI_SZ                        => String::from_reg_value(rv).unwrap_or_default().replace(&['\r', '\n', '\t'][..], " "),
         REG_DWORD                           => u32::from_reg_value(rv).unwrap_or_default().to_string(),
         REG_QWORD                           => u64::from_reg_value(rv).unwrap_or_default().to_string(),
-        REG_BINARY                          => hex::encode(rv.bytes.iter().map(|&c| c as char).collect::<String>()), // This works but not as wanted for Example Ä should return c4 instead it is c384 So it seems to be UTF-8 (hex). Also I miss Spaces
+        REG_BINARY                          => bytes_to_hex (rv),
         REG_DWORD_BIG_ENDIAN                => "REG_DWORD_BIG_ENDIAN".to_string(),
         REG_LINK                            => "REG_LINK".to_string(),
         REG_RESOURCE_LIST                   => "REG_RESOURCE_LIST".to_string(),
