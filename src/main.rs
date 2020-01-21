@@ -10,18 +10,19 @@ use serde::{Serialize, Deserialize};
 #[allow(non_snake_case)]
 struct DataXhange {
     file_version: u8,
-    BIOS: BIOS,
+    SystemInformation: SystemInformation,
     HardwareConfig: HardwareConfig,
     //phones: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 #[allow(non_snake_case)]
-struct BIOS {
+struct SystemInformation {
     SystemManufacturer: String, 
     SystemProductName: String, 
     BIOSVersion: String, 
     BIOSReleaseDate: String, 
+    ComputerHardwareId: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -125,9 +126,10 @@ fn main() -> std::io::Result<()> {
 
     let myjson = DataXhange {
         file_version : 1 ,
-        BIOS : BIOS {
+        SystemInformation : SystemInformation {
             SystemManufacturer: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemManufacturer"), 
             SystemProductName: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemProductName"), 
+            ComputerHardwareId: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "ComputerHardwareId"), 
             BIOSVersion: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSVersion"), 
             BIOSReleaseDate: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSReleaseDate"), 
             } ,
@@ -162,6 +164,7 @@ fn main() -> std::io::Result<()> {
     regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"#, "Domain", &inifile);
+    
     regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "ComputerHardwareId", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemManufacturer", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemProductName", &inifile);
@@ -169,8 +172,6 @@ fn main() -> std::io::Result<()> {
     regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSReleaseDate", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\HardwareConfig\Current"#, "EnclosureType", &inifile);
 
-    regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "REG_BINARY", &inifile);
-    regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "REG_MULTI_SZ", &inifile);
     inifile.write_all(b"[Software]\n")?;
     regkeyloop(r#"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"#, &inifile);
     inifile.write_all(b"[Software_WOW6432Node]\n")?;
