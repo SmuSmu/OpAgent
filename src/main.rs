@@ -1,7 +1,28 @@
 extern crate winreg;
+extern crate serde_json;
 
 use winreg::enums::{HKEY_LOCAL_MACHINE, KEY_READ};
 use std::io::prelude::Write;
+use serde::{Serialize, Deserialize};
+
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct DataXhange {
+    file_version: u8,
+    BIOS: BIOS,
+    //address: Address,
+    //phones: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct BIOS {
+    SystemManufacturer: String, 
+    SystemProductName: String, 
+    BIOSVersion: String, 
+    BIOSReleaseDate: String, 
+}
 
 fn bytes_to_hex (input: &winreg::RegValue) -> String
 {
@@ -71,8 +92,21 @@ fn regvalloop(regpath: &str, inifile: &std::fs::File) {
 
 fn main() -> std::io::Result<()> {
 
+    let myjson = DataXhange {
+        file_version : 1 ,
+        BIOS : BIOS {
+            SystemManufacturer: "String".to_string(), 
+            SystemProductName: "String".to_string(), 
+            BIOSVersion: "String".to_string(), 
+            BIOSReleaseDate: "String".to_string(), 
+            }
+        };
+    println!("{}", serde_json::to_string(&myjson).unwrap());
+
+
     let mut inifile = std::fs::File::create("output.ini")?;
-    inifile.write_all(b"[FileInfo]\n")?;
+
+    inifile.write_all(serde_json::to_string(&myjson).unwrap().as_bytes())?;
     inifile.write_all(b"Version=1\n")?;
     inifile.write_all(b"[Machine]\n")?;
     regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName", &inifile);
