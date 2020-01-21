@@ -11,7 +11,7 @@ use serde::{Serialize, Deserialize};
 struct DataXhange {
     file_version: u8,
     BIOS: BIOS,
-    //address: Address,
+    HardwareConfig: HardwareConfig,
     //phones: Vec<String>,
 }
 
@@ -23,6 +23,24 @@ struct BIOS {
     BIOSVersion: String, 
     BIOSReleaseDate: String, 
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct HardwareConfig {
+    BaseBoardManufacturer: String, 
+    BaseBoardProduct: String, 
+    BIOSReleaseDate: String, 
+    BIOSVendor: String, 
+    BIOSVersion: String, 
+    EnclosureType: String, 
+    SystemBiosVersion: String, 
+    SystemFamily: String, 
+    SystemManufacturer: String, 
+    SystemProductName: String, 
+    SystemSKU: String, 
+}
+
+
 
 fn bytes_to_hex (input: &winreg::RegValue) -> String
 {
@@ -112,6 +130,19 @@ fn main() -> std::io::Result<()> {
             SystemProductName: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemProductName"), 
             BIOSVersion: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSVersion"), 
             BIOSReleaseDate: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSReleaseDate"), 
+            } ,
+        HardwareConfig : HardwareConfig {
+            BaseBoardManufacturer: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "BaseBoardManufacturer"),
+            BaseBoardProduct: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "BaseBoardProduct"),
+            BIOSReleaseDate: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "BIOSReleaseDate"),
+            BIOSVendor: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "BIOSVendor"),
+            BIOSVersion: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "BIOSVersion"),
+            EnclosureType: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "EnclosureType"),
+            SystemBiosVersion: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "SystemBiosVersion"),
+            SystemFamily: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "SystemFamily"),
+            SystemManufacturer: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "SystemManufacturer"),
+            SystemProductName: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "SystemProductName"),
+            SystemSKU: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "SystemSKU"),
             }
         };
     println!("{}", serde_json::to_string(&myjson).unwrap());
