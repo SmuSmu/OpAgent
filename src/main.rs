@@ -52,7 +52,7 @@ fn display_reg_value(rv: &winreg::RegValue) -> String {
     }
 }
 
-fn regreadvalue(regpath: &str, regvalue: &str, mut inifile: &std::fs::File) {
+fn regreadvaluetoinifile(regpath: &str, regvalue: &str, mut inifile: &std::fs::File) {
     let hklm = winreg::RegKey::predef(HKEY_LOCAL_MACHINE);
     let subkey = hklm.open_subkey_with_flags(regpath, KEY_READ);
     let thevalue = match subkey {
@@ -67,6 +67,19 @@ fn regreadvalue(regpath: &str, regvalue: &str, mut inifile: &std::fs::File) {
     inifile
         .write_all(binaryiniline)
         .expect("could not write line");
+}
+
+fn regreadvalue(regpath: &str, regvalue: &str) ->String {
+    let hklm = winreg::RegKey::predef(HKEY_LOCAL_MACHINE);
+    let subkey = hklm.open_subkey_with_flags(regpath, KEY_READ);
+    let thevalue = match subkey {
+        Ok(subkey) => {
+            let v = subkey.get_raw_value(regvalue).unwrap();
+            display_reg_value(&v)
+        }
+        Err(_) => "".to_string(),
+    };
+    return thevalue.trim().to_string();
 }
 
 fn regkeyloop(regpath: &str, inifile: &std::fs::File) {
@@ -85,7 +98,7 @@ fn regvalloop(regpath: &str, inifile: &std::fs::File) {
         .unwrap();
     for (name, _value) in subkey.enum_values().map(|x| x.unwrap()) {
         //println!("{}={}", regpath, name);
-        regreadvalue(regpath, name.as_str(), &inifile);
+        regreadvaluetoinifile(regpath, name.as_str(), &inifile);
     }
 }
 
@@ -95,36 +108,37 @@ fn main() -> std::io::Result<()> {
     let myjson = DataXhange {
         file_version : 1 ,
         BIOS : BIOS {
-            SystemManufacturer: "String".to_string(), 
-            SystemProductName: "String".to_string(), 
-            BIOSVersion: "String".to_string(), 
-            BIOSReleaseDate: "String".to_string(), 
+            SystemManufacturer: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemManufacturer"), 
+            SystemProductName: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemProductName"), 
+            BIOSVersion: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSVersion"), 
+            BIOSReleaseDate: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSReleaseDate"), 
             }
         };
     println!("{}", serde_json::to_string(&myjson).unwrap());
 
 
     let mut inifile = std::fs::File::create("output.ini")?;
+    let mut jsonfile = std::fs::File::create("output.json")?;
 
-    inifile.write_all(serde_json::to_string(&myjson).unwrap().as_bytes())?;
+    jsonfile.write_all(serde_json::to_string(&myjson).unwrap().as_bytes())?;
     inifile.write_all(b"Version=1\n")?;
     inifile.write_all(b"[Machine]\n")?;
-    regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName", &inifile);
-    regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "CurrentVersion", &inifile);
-    regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "EditionID", &inifile);
-    regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ReleaseId", &inifile);
-    regreadvalue(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid", &inifile);
-    regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName", &inifile);
-    regreadvalue(r#"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"#, "Domain", &inifile);
-    regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "ComputerHardwareId", &inifile);
-    regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemManufacturer", &inifile);
-    regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemProductName", &inifile);
-    regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSVersion", &inifile);
-    regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSReleaseDate", &inifile);
-    regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "EnclosureType", &inifile);
+    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName", &inifile);
+    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "CurrentVersion", &inifile);
+    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "EditionID", &inifile);
+    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ReleaseId", &inifile);
+    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid", &inifile);
+    regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName", &inifile);
+    regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"#, "Domain", &inifile);
+    regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "ComputerHardwareId", &inifile);
+    regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemManufacturer", &inifile);
+    regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemProductName", &inifile);
+    regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSVersion", &inifile);
+    regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSReleaseDate", &inifile);
+    regreadvaluetoinifile(r#"SYSTEM\HardwareConfig\Current"#, "EnclosureType", &inifile);
 
-    regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "REG_BINARY", &inifile);
-    regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "REG_MULTI_SZ", &inifile);
+    regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "REG_BINARY", &inifile);
+    regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "REG_MULTI_SZ", &inifile);
     inifile.write_all(b"[Software]\n")?;
     regkeyloop(r#"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"#, &inifile);
     inifile.write_all(b"[Software_WOW6432Node]\n")?;

@@ -19,3 +19,6 @@ Cargo.lock
 
 #Ignore output.ini
 output.ini
+
+#Ignore output.json
+output.json
