@@ -120,7 +120,8 @@ fn main() -> std::io::Result<()> {
     let mut inifile = std::fs::File::create("output.ini")?;
     let mut jsonfile = std::fs::File::create("output.json")?;
 
-    jsonfile.write_all(serde_json::to_string(&myjson).unwrap().as_bytes())?;
+    //jsonfile.write_all(serde_json::to_string(&myjson).unwrap().as_bytes())?;
+    jsonfile.write_all(serde_json::to_string_pretty(&myjson).unwrap().as_bytes())?;
     inifile.write_all(b"Version=1\n")?;
     inifile.write_all(b"[Machine]\n")?;
     regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName", &inifile);
