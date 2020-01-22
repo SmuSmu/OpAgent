@@ -191,21 +191,25 @@ fn main() -> std::io::Result<()> {
     jsonfile.write_all(serde_json::to_string_pretty(&myjson).unwrap().as_bytes())?;
     inifile.write_all(b"Version=1\n")?;
     inifile.write_all(b"[Machine]\n")?;
-    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName", &inifile);
-    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "CurrentVersion", &inifile);
-    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "EditionID", &inifile);
-    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ReleaseId", &inifile);
+    
+    // needs to be in JSON
     regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"#, "Domain", &inifile);
     
+    // already JSON
+    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName", &inifile);
+    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "CurrentVersion", &inifile);
+    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "EditionID", &inifile);
+    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ReleaseId", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "ComputerHardwareId", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemManufacturer", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemProductName", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSVersion", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSReleaseDate", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\HardwareConfig\Current"#, "EnclosureType", &inifile);
-
+    
+    // needs to be in JSON
     inifile.write_all(b"[Software]\n")?;
     regkeyloop(r#"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"#, &inifile);
     inifile.write_all(b"[Software_WOW6432Node]\n")?;
