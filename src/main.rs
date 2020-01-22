@@ -9,11 +9,20 @@ use serde::{Serialize, Deserialize};
 #[derive(Serialize, Deserialize, Debug)]
 #[allow(non_snake_case)]
 struct DataXhange {
-    file_version: u8,
+    FileVersion: u8,
+    Machine: Machine,
     Windows: Windows,
     SystemInformation: SystemInformation,
     HardwareConfig: HardwareConfig,
     //phones: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct Machine {
+    MachineGuid: String, 
+    ComputerName: String, 
+    Domain: String, 
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -140,11 +149,15 @@ fn regvalloop(regpath: &str, inifile: &std::fs::File) {
     }
 }
 
-
 fn main() -> std::io::Result<()> {
 
     let myjson = DataXhange {
-        file_version : 1 ,
+        FileVersion : 1 ,
+        Machine : Machine {
+            MachineGuid: regreadvalue(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid"), 
+            ComputerName: regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName"), 
+            Domain: regreadvalue(r#"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"#, "Domain"), 
+            } ,
         Windows : Windows {
             ReleaseId: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ReleaseID"), 
             ProductName: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName"), 
