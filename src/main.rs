@@ -10,9 +10,28 @@ use serde::{Serialize, Deserialize};
 #[allow(non_snake_case)]
 struct DataXhange {
     file_version: u8,
+    Windows: Windows,
     SystemInformation: SystemInformation,
     HardwareConfig: HardwareConfig,
     //phones: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct Windows {
+    ReleaseId: String, 
+    ProductName: String, 
+    InstallDate: String, 
+    InstallTime: String, 
+    EditionID: String,
+    EditionSubManufacturer: String,
+    EditionSubstring: String,
+    EditionSubVersion: String,
+    InstallationType: String,
+    CurrentVersion: String,
+    CurrentType: String,
+    CurrentMajorVersionNumber: String,
+    CurrentMinorVersionNumber: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -126,6 +145,21 @@ fn main() -> std::io::Result<()> {
 
     let myjson = DataXhange {
         file_version : 1 ,
+        Windows : Windows {
+            ReleaseId: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ReleaseID"), 
+            ProductName: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName"), 
+            InstallDate: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "InstallDate"), 
+            InstallTime: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "InstallTime"), 
+            EditionID: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "EditionID"), 
+            EditionSubManufacturer: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "EditionSubManufacturer"), 
+            EditionSubstring: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "EditionSubstring"), 
+            EditionSubVersion: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "EditionSubVersion"), 
+            InstallationType: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "InstallationType"), 
+            CurrentVersion: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "CurrentVersion"), 
+            CurrentType: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "CurrentType"), 
+            CurrentMajorVersionNumber: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "CurrentMajorVersionNumber"), 
+            CurrentMinorVersionNumber: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "CurrentMinorVersionNumber"), 
+            } ,
         SystemInformation : SystemInformation {
             SystemManufacturer: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemManufacturer"), 
             SystemProductName: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemProductName"), 
