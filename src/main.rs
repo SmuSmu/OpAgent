@@ -3,10 +3,10 @@ extern crate serde_json;
 
 use winreg::enums::{HKEY_LOCAL_MACHINE, KEY_READ};
 use std::io::prelude::Write;
-use serde::{Serialize, Deserialize};
+use serde::{Serialize};
 
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 #[allow(non_snake_case)]
 struct DataXhange {
     FileVersion: u8,
@@ -17,7 +17,7 @@ struct DataXhange {
     //phones: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 #[allow(non_snake_case)]
 struct Machine {
     MachineGuid: String, 
@@ -25,7 +25,7 @@ struct Machine {
     Domain: String, 
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 #[allow(non_snake_case)]
 struct Windows {
     ReleaseId: String, 
@@ -43,7 +43,7 @@ struct Windows {
     CurrentMinorVersionNumber: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 #[allow(non_snake_case)]
 struct SystemInformation {
     SystemManufacturer: String, 
@@ -53,7 +53,7 @@ struct SystemInformation {
     ComputerHardwareId: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Debug)]
 #[allow(non_snake_case)]
 struct HardwareConfig {
     BaseBoardManufacturer: String, 
