@@ -205,12 +205,10 @@ fn main() -> std::io::Result<()> {
     inifile.write_all(b"Version=1\n")?;
     inifile.write_all(b"[Machine]\n")?;
     
-    // needs to be in JSON
+    // already JSON
     regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName", &inifile);
     regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"#, "Domain", &inifile);
-    
-    // already JSON
     regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName", &inifile);
     regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "CurrentVersion", &inifile);
     regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "EditionID", &inifile);
