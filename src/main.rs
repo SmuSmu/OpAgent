@@ -14,7 +14,16 @@ struct DataXhange {
     Windows: Windows,
     SystemInformation: SystemInformation,
     HardwareConfig: HardwareConfig,
-    //phones: Vec<String>,
+    Software: Vec<Software>,
+    SoftwareWOW6432Node: Vec<Software>,
+}
+
+#[derive(Serialize, Debug)]
+#[allow(non_snake_case)]
+struct Software {
+    DisplayName: String, 
+    Publisher: String, 
+    DisplayVersion: String, 
 }
 
 #[derive(Serialize, Debug)]
@@ -151,13 +160,26 @@ fn regvalloop(regpath: &str, inifile: &std::fs::File) {
 
 fn main() -> std::io::Result<()> {
 
-    let myjson = DataXhange {
+    let testvec = Software {
+        DisplayName : "Software".to_string(),
+        Publisher : "Ms".to_string(),
+        DisplayVersion : "1".to_string(),
+    };
+    let testvec2 = Software {
+        DisplayName : "Software 2".to_string(),
+        Publisher : "Ms".to_string(),
+        DisplayVersion : "2".to_string(),
+    };
+
+    let mut myjson = DataXhange {
         FileVersion : 1 ,
         Machine : Machine {
             MachineGuid: regreadvalue(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid"), 
             ComputerName: regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName"), 
             Domain: regreadvalue(r#"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"#, "Domain"), 
             } ,
+        Software : Vec::new(),
+        SoftwareWOW6432Node : Vec::new(),
         Windows : Windows {
             ReleaseId: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ReleaseID"), 
             ProductName: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName"), 
@@ -194,7 +216,13 @@ fn main() -> std::io::Result<()> {
             SystemSKU: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "SystemSKU"),
             }
         };
+    
+    myjson.Software.push(testvec);
+    myjson.Software.push(testvec2);
+    
     println!("{}", serde_json::to_string(&myjson).unwrap());
+
+    
 
 
     let mut inifile = std::fs::File::create("output.ini")?;
