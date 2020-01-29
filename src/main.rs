@@ -113,9 +113,12 @@ fn regreadvaluetoinifile(regpath: &str, regvalue: &str, mut inifile: &std::fs::F
     let subkey = hklm.open_subkey_with_flags(regpath, KEY_READ);
     let thevalue = match subkey {
         Ok(subkey) => {
-            let v = subkey.get_raw_value(regvalue).unwrap();
-            display_reg_value(&v)
-        }
+            let value = subkey.get_raw_value(regvalue);
+                match value {
+                Ok(v) => display_reg_value(&v),
+                Err(_) => "".to_string(),
+                }
+            }
         Err(_) => "".to_string(),
     };
     let iniline = format!("{}\\{}={}\n", regpath, regvalue, thevalue.trim());
