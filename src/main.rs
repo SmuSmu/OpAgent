@@ -21,6 +21,7 @@ struct DataXhange {
 #[derive(Serialize, Debug)]
 #[allow(non_snake_case)]
 struct Software {
+    Key: String,
     DisplayName: String, 
     Publisher: String, 
     DisplayVersion: String, 
@@ -108,78 +109,49 @@ fn display_reg_value(rv: &winreg::RegValue) -> String {
     }
 }
 
-fn regreadvaluetoinifile(regpath: &str, regvalue: &str, mut inifile: &std::fs::File) {
-    let hklm = winreg::RegKey::predef(HKEY_LOCAL_MACHINE);
-    let subkey = hklm.open_subkey_with_flags(regpath, KEY_READ);
-    let thevalue = match subkey {
-        Ok(subkey) => {
-            let v = subkey.get_raw_value(regvalue).unwrap();
-            display_reg_value(&v)
-        }
-        Err(_) => "".to_string(),
-    };
-    let iniline = format!("{}\\{}={}\n", regpath, regvalue, thevalue.trim());
-    let binaryiniline = iniline.as_bytes();
-    inifile
-        .write_all(binaryiniline)
-        .expect("could not write line");
-}
-
 fn regreadvalue(regpath: &str, regvalue: &str) ->String {
     let hklm = winreg::RegKey::predef(HKEY_LOCAL_MACHINE);
     let subkey = hklm.open_subkey_with_flags(regpath, KEY_READ);
-    let thevalue = match subkey {
+    match subkey {
         Ok(subkey) => {
-            let v = subkey.get_raw_value(regvalue).unwrap();
-            display_reg_value(&v)
+            let subvalue = subkey.get_raw_value(regvalue);
+            let _strange = match subvalue {
+                Ok(subvalue) => return display_reg_value(&subvalue),
+                Err(_) => return "".to_string(),
+                };
+            },
+        Err(_) => return "".to_string(),
         }
-        Err(_) => "".to_string(),
-    };
-    return thevalue.trim().to_string();
-}
+    }
 
-fn regkeyloop(regpath: &str, inifile: &std::fs::File) {
+fn regkeyloop(regpath: &str) -> Vec<Software>{
+    let mut myvec = Vec::<Software>::new();
+
     let subkey = winreg::RegKey::predef(HKEY_LOCAL_MACHINE)
         .open_subkey_with_flags(regpath, KEY_READ)
         .unwrap();
     for name in subkey.enum_keys().map(|x| x.unwrap()) {
-        //println!("{}", name);
-        regvalloop(format!("{}\\{}", regpath, name).as_str(), &inifile);
+        //println!("{}\\{}", regpath,name);
+        myvec.push(Software {
+            Key : name.to_string(),
+            DisplayName : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "DisplayName"), 
+            Publisher : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "Publisher"), 
+            DisplayVersion : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "DisplayVersion"), 
+            })
+        }
+    return myvec;
     }
-}
-
-fn regvalloop(regpath: &str, inifile: &std::fs::File) {
-    let subkey = winreg::RegKey::predef(HKEY_LOCAL_MACHINE)
-        .open_subkey_with_flags(regpath, KEY_READ)
-        .unwrap();
-    for (name, _value) in subkey.enum_values().map(|x| x.unwrap()) {
-        //println!("{}={}", regpath, name);
-        regreadvaluetoinifile(regpath, name.as_str(), &inifile);
-    }
-}
 
 fn main() -> std::io::Result<()> {
-
-    let testvec = Software {
-        DisplayName : "Software".to_string(),
-        Publisher : "Ms".to_string(),
-        DisplayVersion : "1".to_string(),
-    };
-    let testvec2 = Software {
-        DisplayName : "Software 2".to_string(),
-        Publisher : "Ms".to_string(),
-        DisplayVersion : "2".to_string(),
-    };
-
-    let mut myjson = DataXhange {
+    let myjson = DataXhange {
         FileVersion : 1 ,
         Machine : Machine {
             MachineGuid: regreadvalue(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid"), 
             ComputerName: regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName"), 
             Domain: regreadvalue(r#"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"#, "Domain"), 
             } ,
-        Software : Vec::new(),
-        SoftwareWOW6432Node : Vec::new(),
+        Software : regkeyloop (r#"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"#),
+        SoftwareWOW6432Node : regkeyloop (r#"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"#),
         Windows : Windows {
             ReleaseId: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ReleaseID"), 
             ProductName: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName"), 
@@ -217,42 +189,13 @@ fn main() -> std::io::Result<()> {
             }
         };
     
-    myjson.Software.push(testvec);
-    myjson.Software.push(testvec2);
-    
-    println!("{}", serde_json::to_string(&myjson).unwrap());
-
-    
-
-
-    let mut inifile = std::fs::File::create("output.ini")?;
+    //println!("{}", serde_json::to_string(&myjson).unwrap());
     let mut jsonfile = std::fs::File::create("output.json")?;
+
+    
 
     //jsonfile.write_all(serde_json::to_string(&myjson).unwrap().as_bytes())?;
     jsonfile.write_all(serde_json::to_string_pretty(&myjson).unwrap().as_bytes())?;
-    inifile.write_all(b"Version=1\n")?;
-    inifile.write_all(b"[Machine]\n")?;
-    
-    // already JSON
-    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid", &inifile);
-    regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName", &inifile);
-    regreadvaluetoinifile(r#"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"#, "Domain", &inifile);
-    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ProductName", &inifile);
-    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "CurrentVersion", &inifile);
-    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "EditionID", &inifile);
-    regreadvaluetoinifile(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "ReleaseId", &inifile);
-    regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "ComputerHardwareId", &inifile);
-    regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemManufacturer", &inifile);
-    regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemProductName", &inifile);
-    regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSVersion", &inifile);
-    regreadvaluetoinifile(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSReleaseDate", &inifile);
-    regreadvaluetoinifile(r#"SYSTEM\HardwareConfig\Current"#, "EnclosureType", &inifile);
-    
-    // needs to be in JSON
-    inifile.write_all(b"[Software]\n")?;
-    regkeyloop(r#"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"#, &inifile);
-    inifile.write_all(b"[Software_WOW6432Node]\n")?;
-    regkeyloop(r#"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"#, &inifile);
 
     Ok(())
 }
