@@ -24,7 +24,14 @@ struct Software {
     Key: String,
     DisplayName: String, 
     Publisher: String, 
-    DisplayVersion: String, 
+    DisplayVersion: String,
+    InstallDate: String, 
+    Language: String, 
+    SystemComponent: String, 
+    UninstallString: String, 
+    QuietUninstallString: String, 
+    VersionMajor: String, 
+    VersionMinor: String, 
 }
 
 #[derive(Serialize, Debug)]
@@ -134,9 +141,16 @@ fn regkeyloop(regpath: &str) -> Vec<Software>{
         //println!("{}\\{}", regpath,name);
         myvec.push(Software {
             Key : name.to_string(),
-            DisplayName : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "DisplayName"), 
-            Publisher : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "Publisher"), 
-            DisplayVersion : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "DisplayVersion"), 
+            DisplayName : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "DisplayName"),
+            Publisher : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "Publisher"),
+            DisplayVersion : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "DisplayVersion"),
+            InstallDate : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "InstallDate"),
+            Language : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "Language"),
+            SystemComponent : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "SystemComponent"),
+            UninstallString : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "UninstallString"),
+            QuietUninstallString : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "QuietUninstallString"),
+            VersionMajor : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "VersionMajor"),
+            VersionMinor : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "VersionMinor"),
             })
         }
     return myvec;
