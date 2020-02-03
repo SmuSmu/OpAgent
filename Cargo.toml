@@ -1,15 +1,16 @@
 [package]
 name = "op_agent"
-version = "0.3.4"
-authors = ["Jean"]
+version = "0.3.5"
+authors = ["jikwaa"]
 edition = "2018"
 build = "build.rs"
+publish = false
 
 [package.metadata.winres]
 OriginalFilename = "OP Agent.exe"
 LegalCopyright = "Copyright © 2020"
-FileDescription = "Agent Software Tool"
-CompanyName = "Boo Productions"
+FileDescription = "jikwaa Inventory Agent"
+CompanyName = "jikwaa"
 
 [dependencies]
 winreg = "0.6"
