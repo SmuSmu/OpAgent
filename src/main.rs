@@ -16,7 +16,7 @@ struct DataXhange {
     HardwareConfig: HardwareConfig,
     Software: Vec<Software>,
     SoftwareWOW6432Node: Vec<Software>,
-}
+    }
 
 #[derive(Serialize, Debug)]
 #[allow(non_snake_case)]
@@ -32,7 +32,7 @@ struct Software {
     QuietUninstallString: String, 
     VersionMajor: String, 
     VersionMinor: String, 
-}
+    }
 
 #[derive(Serialize, Debug)]
 #[allow(non_snake_case)]
@@ -40,7 +40,7 @@ struct Machine {
     MachineGuid: String, 
     ComputerName: String, 
     Domain: String, 
-}
+    }
 
 #[derive(Serialize, Debug)]
 #[allow(non_snake_case)]
@@ -58,7 +58,7 @@ struct Windows {
     CurrentType: String,
     CurrentMajorVersionNumber: String,
     CurrentMinorVersionNumber: String,
-}
+    }
 
 #[derive(Serialize, Debug)]
 #[allow(non_snake_case)]
@@ -68,7 +68,7 @@ struct SystemInformation {
     BIOSVersion: String, 
     BIOSReleaseDate: String, 
     ComputerHardwareId: String,
-}
+    }
 
 #[derive(Serialize, Debug)]
 #[allow(non_snake_case)]
@@ -84,18 +84,17 @@ struct HardwareConfig {
     SystemManufacturer: String, 
     SystemProductName: String, 
     SystemSKU: String, 
-}
+    }
 
 
 
-fn bytes_to_hex (input: &winreg::RegValue) -> String
-{
+fn bytes_to_hex (input: &winreg::RegValue) -> String {
     let mut output: String = "".to_string();
     for x in &input.bytes {
         output = format!("{} {}", output, format!("{:02x}", x));
-    }
+        }
     return output.trim().to_string();
-}
+    }
 
 fn display_reg_value(rv: &winreg::RegValue) -> String {
     use winreg::enums::RegType::*;
@@ -113,8 +112,8 @@ fn display_reg_value(rv: &winreg::RegValue) -> String {
         REG_RESOURCE_LIST                   => "REG_RESOURCE_LIST".to_string(),
         REG_FULL_RESOURCE_DESCRIPTOR        => "REG_FULL_RESOURCE_DESCRIPTOR".to_string(),
         REG_RESOURCE_REQUIREMENTS_LIST      => "REG_RESOURCE_REQUIREMENTS_LIST".to_string(),
+        }
     }
-}
 
 fn regreadvalue(regpath: &str, regvalue: &str) ->String {
     let hklm = winreg::RegKey::predef(HKEY_LOCAL_MACHINE);
@@ -131,7 +130,7 @@ fn regreadvalue(regpath: &str, regvalue: &str) ->String {
         }
     }
 
-fn regkeyloop(regpath: &str) -> Vec<Software>{
+fn regkeyloop(regpath: &str) -> Vec<Software> {
     let mut myvec = Vec::<Software>::new();
 
     let subkey = winreg::RegKey::predef(HKEY_LOCAL_MACHINE)
@@ -212,4 +211,4 @@ fn main() -> std::io::Result<()> {
     jsonfile.write_all(serde_json::to_string_pretty(&myjson).unwrap().as_bytes())?;
 
     Ok(())
-}
+    }
