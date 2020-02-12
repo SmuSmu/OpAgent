@@ -4,6 +4,7 @@ extern crate serde_json;
 use winreg::enums::{HKEY_LOCAL_MACHINE, KEY_READ};
 use std::io::prelude::Write;
 use serde::{Serialize};
+use std::collections::HashMap;
 
 
 #[derive(Serialize, Debug)]
@@ -14,24 +15,8 @@ struct DataXhange {
     Windows: Windows,
     SystemInformation: SystemInformation,
     HardwareConfig: HardwareConfig,
-    Software: Vec<Software>,
-    SoftwareWOW6432Node: Vec<Software>,
-    }
-
-#[derive(Serialize, Debug)]
-#[allow(non_snake_case)]
-struct Software {
-    Key: String,
-    DisplayName: String, 
-    Publisher: String, 
-    DisplayVersion: String,
-    InstallDate: String, 
-    Language: String, 
-    SystemComponent: String, 
-    UninstallString: String, 
-    QuietUninstallString: String, 
-    VersionMajor: String, 
-    VersionMinor: String, 
+    Software: HashMap<String,HashMap<String,String>>,
+    SoftwareWOW6432Node: HashMap<String,HashMap<String,String>>
     }
 
 #[derive(Serialize, Debug)]
@@ -130,30 +115,29 @@ fn regreadvalue(regpath: &str, regvalue: &str) ->String {
         }
     }
 
-fn regkeyloop(regpath: &str) -> Vec<Software> {
-    let mut myvec = Vec::<Software>::new();
-
-    let subkey = winreg::RegKey::predef(HKEY_LOCAL_MACHINE)
-        .open_subkey_with_flags(regpath, KEY_READ)
-        .unwrap();
-    for name in subkey.enum_keys().map(|x| x.unwrap()) {
-        //println!("{}\\{}", regpath,name);
-        myvec.push(Software {
-            Key : name.to_string(),
-            DisplayName : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "DisplayName"),
-            Publisher : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "Publisher"),
-            DisplayVersion : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "DisplayVersion"),
-            InstallDate : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "InstallDate"),
-            Language : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "Language"),
-            SystemComponent : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "SystemComponent"),
-            UninstallString : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "UninstallString"),
-            QuietUninstallString : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "QuietUninstallString"),
-            VersionMajor : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "VersionMajor"),
-            VersionMinor : regreadvalue(format!("{}\\{}",regpath,name).as_str(), "VersionMinor"),
-            })
+    fn regkeyloop(regpath: &str) -> HashMap<String,HashMap<String,String>> {
+        let mut output = HashMap::new();
+        let subkey = winreg::RegKey::predef(HKEY_LOCAL_MACHINE)
+            .open_subkey_with_flags(regpath, KEY_READ)
+            .unwrap();
+        for name in subkey.enum_keys().map(|x| x.unwrap()) {
+            //println!("-----{}\\{}", regpath,name);
+            output.insert(name.to_string(), regvalloop(format!("{}\\{}",regpath,name).as_str()));
+            }
+        return output;
         }
-    return myvec;
-    }
+
+    fn regvalloop(regpath: &str) -> HashMap<String,String> {
+        let mut output = HashMap::new();
+        let subkey = winreg::RegKey::predef(HKEY_LOCAL_MACHINE)
+            .open_subkey_with_flags(regpath, KEY_READ)
+            .unwrap();
+        for (name, _value) in subkey.enum_values().map(|x| x.unwrap()) {
+            //println!("{} = {:?}", name, value);
+            output.insert(name.to_string(), regreadvalue(regpath, name.as_str()));
+            }
+        return output;
+        }
 
 fn main() -> std::io::Result<()> {
     let myjson = DataXhange {
