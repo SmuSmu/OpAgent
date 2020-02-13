@@ -116,6 +116,7 @@ fn regreadvalue(regpath: &str, regvalue: &str) ->String {
     }
 
     fn regkeyloop(regpath: &str) -> HashMap<String,HashMap<String,String>> {
+        //let hklm = winreg::RegKey::predef(HKEY_LOCAL_MACHINE);
         let mut output = HashMap::new();
         let subkey = winreg::RegKey::predef(HKEY_LOCAL_MACHINE)
             .open_subkey_with_flags(regpath, KEY_READ)
@@ -129,14 +130,17 @@ fn regreadvalue(regpath: &str, regvalue: &str) ->String {
 
     fn regvalloop(regpath: &str) -> HashMap<String,String> {
         let mut output = HashMap::new();
-        let subkey = winreg::RegKey::predef(HKEY_LOCAL_MACHINE)
-            .open_subkey_with_flags(regpath, KEY_READ)
-            .unwrap();
-        for (name, _value) in subkey.enum_values().map(|x| x.unwrap()) {
-            //println!("{} = {:?}", name, value);
-            output.insert(name.to_string(), regreadvalue(regpath, name.as_str()));
+        let hklm = winreg::RegKey::predef(HKEY_LOCAL_MACHINE);
+        let subkey = hklm.open_subkey_with_flags(regpath, KEY_READ);
+        match subkey {
+            Ok(subkey) => {
+                for (name, _value) in subkey.enum_values().map(|x| x.unwrap()) {
+                    output.insert(name.to_string(), regreadvalue(regpath, name.as_str()));
+                    }
+                return output;
+                },
+            Err(_) => return output,
             }
-        return output;
         }
 
 fn main() -> std::io::Result<()> {
