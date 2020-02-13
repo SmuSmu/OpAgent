@@ -147,6 +147,10 @@ fn regreadvalue(regpath: &str, regvalue: &str) ->String {
         }
 
 fn main() -> std::io::Result<()> {
+    let org_id: String = regreadvalue(r#"SOFTWARE\jikwaa"#, "OrgID");
+    let sec_key: String = regreadvalue(r#"SOFTWARE\jikwaa"#, "SecKey");
+
+    println!("{} : {}", org_id,sec_key);
     let myjson = DataXhange {
         FileVersion : 1 ,
         Machine : Machine {
