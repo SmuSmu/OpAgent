@@ -150,7 +150,7 @@ fn main() -> std::io::Result<()> {
     let org_id: String = regreadvalue(r#"SOFTWARE\jikwaa"#, "OrgID");
     let sec_key: String = regreadvalue(r#"SOFTWARE\jikwaa"#, "SecKey");
 
-    println!("{} : {}", org_id,sec_key);
+    //println!("{} : {}", org_id,sec_key);
     let myjson = DataXhange {
         FileVersion : 1 ,
         Machine : Machine {
@@ -204,6 +204,23 @@ fn main() -> std::io::Result<()> {
 
     //jsonfile.write_all(serde_json::to_string(&myjson).unwrap().as_bytes())?;
     jsonfile.write_all(serde_json::to_string_pretty(&myjson).unwrap().as_bytes())?;
+
+    let resp = attohttpc::post("https://jikwaa.net/api/1/inventory.php")
+        .param("OrgID", org_id)         // set a query parameter
+        .param("SecKey", sec_key)       // set a query parameter
+        .json(&myjson)?                 // set the request body (json feature required)
+        .send()?;                       // send the request
+
+    // Check if the status is a 2XX code.
+    if resp.is_success()
+        {
+        // Consume the response body as text and print it.
+        println!("Output : {}", resp.text()?);
+        }
+    else
+        {
+        println!("ServerError : {}", resp.text()?);
+        }
 
     Ok(())
     }
