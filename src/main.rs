@@ -206,6 +206,7 @@ fn main() -> std::io::Result<()> {
     jsonfile.write_all(serde_json::to_string_pretty(&myjson).unwrap().as_bytes())?;
 
     let resp = attohttpc::post("https://jikwaa.net/api/1/inventory.php")
+    //let resp = attohttpc::post("https://postman-echo.com/post")   // for testing
         .param("OrgID", org_id)         // set a query parameter
         .param("SecKey", sec_key)       // set a query parameter
         .json(&myjson)?                 // set the request body (json feature required)
