@@ -26,4 +26,4 @@ output.json
 # Ignore some Wix Installer stuff
 installer/installer.wixobj
 installer/installer.wixpdb
-installer/installer.wxs
+installer/*.msi
