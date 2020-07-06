@@ -57,7 +57,7 @@
 
             <Dialog Id="CustomDlg" Width="370" Height="270" Title="Setup">
                 <Control Type="Text" Id="InstructionText" Width="300" Height="36" X="38" Y="40">
-                <Text>Enter the requested information below to configure the Aristocrat XYZ Service.</Text>
+                <Text>Enter the requested information below to configure the jikwaa Agent.</Text>
                 </Control>
 
                 <Control Type="Text" Id="OrgIDText" Width="152" Height="15" X="38" Y="90">
