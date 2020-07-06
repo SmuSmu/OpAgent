@@ -11,6 +11,10 @@
         <Property Id="ARPURLINFOABOUT" Value="https://jikwaa.net" />
         <Property Id="ARPNOREPAIR" Value="1" />
         <Property Id="ARPNOMODIFY" Value="1" />
+
+        <Property Id="ORG_ID" Value="ORGID" />
+        <Property Id="SEC_KEY" Value="SECKEY" />
+
         <Upgrade Id="$(var.ProductUpgradeCode)">
             <UpgradeVersion Minimum="$(var.ProductVersion)" OnlyDetect="yes" Property="NEWERVERSIONDETECTED" />
             <UpgradeVersion Minimum="0.0.0" Maximum="$(var.ProductVersion)" IncludeMinimum="yes" IncludeMaximum="no" Property="OLDERVERSIONBEINGUPGRADED" />
@@ -21,7 +25,10 @@
                 <Directory Id="INSTALLDIR" Name="jikwaa">
                     <Component Id="ApplicationFiles" Guid="18C595F1-0FE7-4410-A71B-4C7A36106f8A">
                         <File Id="ApplicationFile1" Source="..\target\release\op_agent.exe" />
-                        <!-- <RegistryValue Root="HKCU" Key="Software\jikwaa\Example" Name="installed" Type="integer" Value="1" KeyPath="yes"/> -->
+                    </Component>
+                    <Component Id="RegistrySettings" Guid="*">
+                        <RegistryValue Root="HKLM" Key="Software\jikwaa" Name="OrgID" Type="string" Value="[ORG_ID]" KeyPath="yes"/>
+                        <RegistryValue Root="HKLM" Key="Software\jikwaa" Name="SecKey" Type="string" Value="[SEC_KEY]"/>
                     </Component>
                 </Directory>
             </Directory>
@@ -43,11 +50,34 @@
             <DialogRef Id="FatalError" />
             <DialogRef Id="UserExit" />
 
-            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
-            <Publish Dialog="WelcomeDlg" Control="Next" Event="EndDialog" Value="Return" Order="2"></Publish>
-        </UI>
+            <UIRef Id="WixUI_Common" />
 
-        <UIRef Id="WixUI_Common" />
+            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomDlg" Order="2">1</Publish>
+            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+
+            <Dialog Id="CustomDlg" Width="370" Height="270" Title="Setup">
+                <Control Type="Text" Id="InstructionText" Width="300" Height="36" X="38" Y="40">
+                <Text>Enter the requested information below to configure the Aristocrat XYZ Service.</Text>
+                </Control>
+
+                <Control Type="Text" Id="OrgIDText" Width="152" Height="15" X="38" Y="90">
+                <Text>OrgID :</Text>
+                </Control>
+                <Control Type="Edit" Id="OrgIDEdit" Width="80" Height="15" X="205" Y="90" Property="ORG_ID" />
+                
+                <Control Type="Text" Id="SecKeyText" Width="152" Height="15" X="38" Y="115">
+                <Text>SecKey :</Text>
+                </Control>
+                <Control Type="Edit" Id="SecKeyEdit" Width="80" Height="15" X="205" Y="115" Property="SEC_KEY" />
+
+                <Control Id="InstallButton" Type="PushButton" X="205" Y="233" Width="56" Height="17" Text="Install" TabSkip="no" Default="yes">
+                <Publish Event="EndDialog" Value="Return" />
+                </Control>
+                <Control Id="CancelButton" Type="PushButton" X="140" Y="233" Width="56" Height="17" Text="Cancel" TabSkip="no" Cancel="yes">
+                <Publish Event="EndDialog" Value="Exit" />
+                </Control>
+            </Dialog>
+        </UI>
 
         <InstallExecuteSequence>
             <RemoveExistingProducts After="InstallValidate" />
@@ -55,6 +85,7 @@
         
         <Feature Id="DefaultFeature" Level="1">
             <ComponentRef Id="ApplicationFiles" />
+            <ComponentRef Id="RegistrySettings" />
         </Feature>
     </Product>
 </Wix>
