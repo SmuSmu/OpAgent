@@ -87,7 +87,7 @@
             <Custom Action="DeleteScheduledTask" After="RemoveFiles">Installed</Custom>
         </InstallExecuteSequence>
 
-        <CustomAction Id="CreateScheduledTask_Cmd" Property="CreateScheduledTask" Value="&quot;[SystemFolder]SCHTASKS.EXE&quot; /CREATE /SC MINUTE /MO 60 /TN &quot;jikwaa Agent Task&quot; /TR &quot;[INSTALLDIR]op_agent.exe&quot; /RU &quot;NT Authority\System&quot; /RP /RL HIGHEST"/>
+        <CustomAction Id="CreateScheduledTask_Cmd" Property="CreateScheduledTask" Value="&quot;[SystemFolder]SCHTASKS.EXE&quot; /CREATE /SC MINUTE /MO 60 /TN &quot;jikwaa Agent Task&quot; /TR &quot;\&quot;[INSTALLDIR]op_agent.exe\&quot;&quot; /RU &quot;NT Authority\System&quot; /RP /RL HIGHEST"/>
         <CustomAction Id="CreateScheduledTask" BinaryKey="WixCA" DllEntry="WixQuietExec" Execute="deferred" Return="check" Impersonate="no"/>
 
         <CustomAction Id="DeleteScheduledTask_Cmd" Property="DeleteScheduledTask" Value="&quot;[SystemFolder]SCHTASKS.EXE&quot; /DELETE /f /TN &quot;jikwaa Agent Task&quot;"/>
