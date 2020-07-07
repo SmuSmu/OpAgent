@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?define ProductVersion = "1.0.0"?>
+<?define ProductVersion = "!(bind.FileVersion.ApplicationFile1)"?>
 <?define ProductUpgradeCode = "BC12102D-6974-4DFB-88F5-19AC346E62D3"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Product Id="*" UpgradeCode="$(var.ProductUpgradeCode)" Name="jikwaa Agent" Version="$(var.ProductVersion)" Manufacturer="jikwaa" Language="1033">
