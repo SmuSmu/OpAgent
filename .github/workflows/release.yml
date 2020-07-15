@@ -1,0 +1,70 @@
+name: Release Job
+
+on:
+  push:
+    paths:
+    - 'DONOTSTARTCargo.toml'
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2.3.1
+    - name: add rust target i686-pc-windows-msvc
+      run: rustup target add i686-pc-windows-msvc
+    - name: Build Release x64
+      run: cargo build --release --target x86_64-pc-windows-msvc
+    - name: Build Release x86
+      run: cargo build --release --target i686-pc-windows-msvc
+    - name: Get Versionnumber from EXE
+      id: version_number
+      run: write-host "::set-output name=version::$((Get-Item .\target\i686-pc-windows-msvc\release\op_agent.exe).VersionInfo.FileVersion)"
+      shell: powershell
+    - name: Make MSI x86 (candle)
+      shell: cmd
+      run: '"%PROGRAMFILES(x86)%\WiX Toolset v3.11\bin\candle.exe" "installer.wxs" "-arch" "x86"'
+      working-directory: installer
+    - name: Make MSI x86 (light)
+      shell: cmd
+      run: '"%PROGRAMFILES(x86)%\WiX Toolset v3.11\bin\light.exe" "installer.wixobj" "-dcl:high" "-ext" "WixUIExtension.dll" "-ext" "WixUtilExtension.dll" "-out" "jikwaa-agent-x86.msi"'
+      working-directory: installer
+    - name: Make MSI x64 (candle)
+      shell: cmd
+      run: '"%PROGRAMFILES(x86)%\WiX Toolset v3.11\bin\candle.exe" "installer.wxs" "-arch" "x64"'
+      working-directory: installer
+    - name: Make MSI x64 (light)
+      shell: cmd
+      run: '"%PROGRAMFILES(x86)%\WiX Toolset v3.11\bin\light.exe" "installer.wixobj" "-dcl:high" "-ext" "WixUIExtension.dll" "-ext" "WixUtilExtension.dll" "-out" "jikwaa-agent-x64.msi"'
+      working-directory: installer
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version_number.outputs.version }}
+        release_name: Release ${{ steps.version_number.outputs.version }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset x86
+      id: upload-release-asset-x86
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./installer/jikwaa-agent-x86.msi
+        asset_name: jikwaa-agent-x86.msi
+        asset_content_type: application/x-msi
+    - name: Upload Release Asset x64
+      id: upload-release-asset-x64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./installer/jikwaa-agent-x64.msi
+        asset_name: jikwaa-agent-x64.msi
+        asset_content_type: application/x-msi
