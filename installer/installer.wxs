@@ -116,5 +116,11 @@
             <ComponentRef Id="ApplicationFiles" />
             <ComponentRef Id="RegistrySettings" />
         </Feature>
+        
+        <?if $(sys.BUILDARCH) = x86 ?>
+            <Condition Message="Setup can not be installed on x64 machine.">
+                <![CDATA[Not VersionNT64]]>
+            </Condition>
+        <?endif?>
     </Product>
 </Wix>
