@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?define ProductVersion = "!(bind.FileVersion.ApplicationFile1)"?>
-<?define ProductUpgradeCode = "BC12102D-6974-4DFB-88F5-19AC346E62D3"?>
+<?define ProductName = "jikwaa Agent" ?>
+<?define ProductAuthor = "jikwaa" ?>
+<?define ProductURL = "https://jikwaa.net" ?>
+<?if $(sys.BUILDARCH)="x64"?>
+  <?define ProductDisplayName = "$(var.ProductName) x64" ?>
+  <?define ProductId = "A3E7F439-EFAD-4219-80F2-897A92ED83A5" ?>
+  <?define ProductUpgradeCode = "B5D82937-7EB0-4C07-8482-20D02888CDB7" ?>
+  <?define Win64 = "yes" ?>
+  <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+  <?define RustTarget = "x86_64-pc-windows-msvc" ?>
+<?elseif $(sys.BUILDARCH)="x86"?>
+  <?define ProductDisplayName = "$(var.ProductName) x86" ?>
+  <?define ProductId = "A17F4326-711A-4B5A-8928-85279472773F" ?>
+  <?define ProductUpgradeCode = "B204AE7A-9CB7-4D5B-8886-B8F3C6588A9E" ?>
+  <?define Win64 = "no" ?>
+  <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+  <?define RustTarget = "i686-pc-windows-msvc" ?>
+<?else?>
+    <?error Unsupported value of sys.BUILDARCH=$(sys.BUILDARCH)?>
+<?endif?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" UpgradeCode="$(var.ProductUpgradeCode)" Name="jikwaa Agent" Version="$(var.ProductVersion)" Manufacturer="jikwaa" Language="1033">
-        <Package InstallerVersion="200" Compressed="yes" Comments="jikwaa Agent Software" />
+    <Product Id="*" UpgradeCode="$(var.ProductUpgradeCode)" Name="$(var.ProductDisplayName)" Version="$(var.ProductVersion)" Manufacturer="$(var.ProductAuthor)" Language="1033">
+        <Package InstallerVersion="200" Compressed="yes" Comments="$(var.ProductDisplayName)" />
         <Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
         <Icon Id="ProductIcon" SourceFile="..\icon.ico" />
         <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
-        <Property Id="ARPHELPLINK" Value="https://jikwaa.net" />
-        <Property Id="ARPURLINFOABOUT" Value="https://jikwaa.net" />
+        <Property Id="ARPHELPLINK" Value="$(var.ProductURL)" />
+        <Property Id="ARPURLINFOABOUT" Value="$(var.ProductURL)" />
         <Property Id="ARPNOREPAIR" Value="1" />
         <Property Id="ARPNOMODIFY" Value="1" />
 
@@ -21,12 +40,12 @@
         </Upgrade>
         <Condition Message="A newer version of this software is already installed.">NOT NEWERVERSIONDETECTED</Condition>
         <Directory Id="TARGETDIR" Name="SourceDir">
-            <Directory Id="ProgramFilesFolder">
-                <Directory Id="INSTALLDIR" Name="jikwaa">
-                    <Component Id="ApplicationFiles" Guid="18C595F1-0FE7-4410-A71B-4C7A36106f8A">
-                        <File Id="ApplicationFile1" Source="..\target\release\op_agent.exe" />
+            <Directory Id="$(var.PlatformProgramFilesFolder)">
+                <Directory Id="INSTALLDIR" Name="$(var.ProductAuthor)">
+                    <Component Id="ApplicationFiles" Guid="*" Win64="$(var.Win64)">
+                        <File Id="ApplicationFile1" Source="..\target\$(var.RustTarget)\release\op_agent.exe" />
                     </Component>
-                    <Component Id="RegistrySettings" Guid="*">
+                    <Component Id="RegistrySettings" Guid="*" Win64="$(var.Win64)">
                         <RegistryValue Root="HKLM" Key="Software\jikwaa" Name="OrgID" Type="string" Value="[ORG_ID]" KeyPath="yes"/>
                         <RegistryValue Root="HKLM" Key="Software\jikwaa" Name="SecKey" Type="string" Value="[SEC_KEY]"/>
                     </Component>
