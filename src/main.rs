@@ -11,6 +11,7 @@ use std::collections::HashMap;
 #[allow(non_snake_case)]
 struct DataXhange {
     FileVersion: u8,
+    BitnessOS: String,
     Machine: Machine,
     Windows: Windows,
     SystemInformation: SystemInformation,
@@ -71,7 +72,18 @@ struct HardwareConfig {
     SystemSKU: String, 
     }
 
-
+fn os_bitness () -> String {
+    match bitness::os_bitness() {
+        Ok(bitness) => {
+            match bitness {
+                bitness::Bitness::X86_32 => return "x32".to_string() ,
+                bitness::Bitness::X86_64 => return "x64".to_string() ,
+                bitness::Bitness::Unknown => return "Unknown".to_string()
+                }
+            },
+        Err(_) => return "Error".to_string(),
+        }
+    }
 
 fn bytes_to_hex (input: &winreg::RegValue) -> String {
     let mut output: String = "".to_string();
@@ -153,6 +165,7 @@ fn main() -> std::io::Result<()> {
     //println!("{} : {}", org_id,sec_key);
     let myjson = DataXhange {
         FileVersion : 1 ,
+        BitnessOS : os_bitness () ,
         Machine : Machine {
             MachineGuid: regreadvalue(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid"), 
             ComputerName: regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName"), 
