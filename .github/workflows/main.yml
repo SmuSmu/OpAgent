@@ -1,3 +1,5 @@
+name: Dump Job Info
+
 on: push
 
 jobs:
