@@ -18,6 +18,7 @@ serde = { version = "1.0.114", features = ["derive"] }
 serde_json = "1.0.56" 
 attohttpc = { version = "0.17.0", features = ["json"] }
 bitness = "0.4.0"
+static_vcruntime = "1.5"
 
 [build-dependencies]
 winres = "0.1"
