@@ -11,7 +11,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2.3.3
+    - uses: actions/checkout@v2.3.5
     - name: add rust target i686-pc-windows-msvc
       run: rustup target add i686-pc-windows-msvc
     - name: Build Release x64
