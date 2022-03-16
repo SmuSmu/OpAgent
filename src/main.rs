@@ -2,6 +2,7 @@
 
 extern crate winreg;
 extern crate serde_json;
+extern crate static_vcruntime; //https://users.rust-lang.org/t/static-vcruntime-distribute-windows-msvc-binaries-without-needing-to-deploy-vcruntime-dll/57599
 
 use winreg::enums::{HKEY_LOCAL_MACHINE, KEY_READ};
 use std::io::prelude::Write;
