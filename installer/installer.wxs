@@ -31,8 +31,8 @@
         <Property Id="ARPNOREPAIR" Value="1" />
         <Property Id="ARPNOMODIFY" Value="1" />
 
-        <Property Id="ORG_ID" Value="ORGID" />
-        <Property Id="SEC_KEY" Value="SECKEY" />
+        <Property Id="ORG_ID" Secure="yes" />
+        <Property Id="SEC_KEY" Secure="yes" />
 
         <Upgrade Id="$(var.ProductUpgradeCode)">
             <UpgradeVersion Minimum="$(var.ProductVersion)" OnlyDetect="yes" Property="NEWERVERSIONDETECTED" />
