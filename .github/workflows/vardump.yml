@@ -1,7 +1,8 @@
 name: Dump Job Info
 
-on: push
-
+on:
+  push:
+    branches: [ master ]
 jobs:
   one:
     runs-on: ubuntu-latest
