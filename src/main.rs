@@ -206,11 +206,11 @@ fn main() -> std::io::Result<()> {
             CurrentMinorVersionNumber: regreadvalue(r#"SOFTWARE\Microsoft\Windows NT\CurrentVersion"#, "CurrentMinorVersionNumber"), 
             } ,
         SystemInformation : SystemInformation {
-            SystemManufacturer: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemManufacturer"), 
-            SystemProductName: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "SystemProductName"), 
-            ComputerHardwareId: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "ComputerHardwareId"), 
-            BIOSVersion: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSVersion"), 
-            BIOSReleaseDate: regreadvalue(r#"SYSTEM\ControlSet001\Control\SystemInformation"#, "BIOSReleaseDate"), 
+            SystemManufacturer: regreadvalue(r#"SYSTEM\CurrentControlSet\Control\SystemInformation"#, "SystemManufacturer"), 
+            SystemProductName: regreadvalue(r#"SYSTEM\CurrentControlSet\Control\SystemInformation"#, "SystemProductName"), 
+            ComputerHardwareId: regreadvalue(r#"SYSTEM\CurrentControlSet\Control\SystemInformation"#, "ComputerHardwareId"), 
+            BIOSVersion: regreadvalue(r#"SYSTEM\CurrentControlSet\Control\SystemInformation"#, "BIOSVersion"), 
+            BIOSReleaseDate: regreadvalue(r#"SYSTEM\CurrentControlSet\Control\SystemInformation"#, "BIOSReleaseDate"), 
             } ,
         HardwareConfig : HardwareConfig {
             BaseBoardManufacturer: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "BaseBoardManufacturer"),
