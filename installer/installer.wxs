@@ -75,24 +75,28 @@
             <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
             <Dialog Id="CustomDlg" Width="370" Height="270" Title="[ProductName] Setup">
-                <Control Type="Text" Id="InstructionText" Width="300" Height="36" X="38" Y="40">
-                <Text>Enter the requested information below to configure the jikwaa Agent.</Text>
+                <Control Id="Bitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="234" TabSkip="no" Text="!(loc.WelcomeDlgBitmap)" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Type="Text" Id="InstructionText" X="135" Y="20" Width="220" Height="60" Transparent="yes" NoPrefix="yes">
+                <Text>{\WixUI_Font_Bigger}Enter the requested information below to configure the jikwaa Agent.</Text>
                 </Control>
 
-                <Control Type="Text" Id="OrgIDText" Width="152" Height="15" X="38" Y="90">
+                <Control Type="Text" Id="OrgIDText" Width="220" Height="10" X="135" Y="80" Transparent="yes" NoPrefix="yes">
                 <Text>OrgID :</Text>
                 </Control>
-                <Control Type="Edit" Id="OrgIDEdit" Width="80" Height="15" X="205" Y="90" Property="ORG_ID" />
+                <Control Type="Edit" Id="OrgIDEdit" Width="220" Height="15" X="135" Y="90" Property="ORG_ID" />
                 
-                <Control Type="Text" Id="SecKeyText" Width="152" Height="15" X="38" Y="115">
+                <Control Type="Text" Id="SecKeyText" Width="220" Height="10" X="135" Y="120" Transparent="yes" NoPrefix="yes">
                 <Text>SecKey :</Text>
                 </Control>
-                <Control Type="Edit" Id="SecKeyEdit" Width="80" Height="15" X="205" Y="115" Property="SEC_KEY" />
+                <Control Type="Edit" Id="SecKeyEdit" Width="220" Height="15" X="135" Y="130" Property="SEC_KEY" />
 
-                <Control Id="InstallButton" Type="PushButton" X="205" Y="233" Width="56" Height="17" Text="Install" TabSkip="no" Default="yes">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUIBack)" />
+
+                <Control Id="InstallButton" Type="PushButton" X="236" Y="243" Width="56" Height="17" Text="!(loc.WixUINext)" TabSkip="no" Default="yes">
                 <Publish Event="EndDialog" Value="Return" />
                 </Control>
-                <Control Id="CancelButton" Type="PushButton" X="140" Y="233" Width="56" Height="17" Text="Cancel" TabSkip="no" Cancel="yes">
+                <Control Id="CancelButton" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="!(loc.WixUICancel)" TabSkip="no" Cancel="yes">
                 <Publish Event="EndDialog" Value="Exit" />
                 </Control>
             </Dialog>
