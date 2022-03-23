@@ -126,5 +126,7 @@
                 <![CDATA[Not VersionNT64]]>
             </Condition>
         <?endif?>
+
+        <WixVariable Id="WixUIDialogBmp" Value="assets\WixUIDialogBmp.bmp" />
     </Product>
 </Wix>
