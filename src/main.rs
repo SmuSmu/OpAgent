@@ -164,19 +164,6 @@ fn regreadvalue(regpath: &str, regvalue: &str) ->String {
 
 fn main() -> std::io::Result<()> {
 
-
-    match bitness::os_bitness() {
-        Ok(bitness) => {
-            match bitness {
-                bitness::Bitness::X86_32 => println!("We're 32-bit!"),
-                bitness::Bitness::X86_64 => println!("We're 64-bit!"),
-                bitness::Bitness::Unknown => println!("We're Unknown!")
-                }
-            },
-        Err(_) => println!("We have an error")
-        }
-
-
     let org_id: String = regreadvalue(r#"SOFTWARE\jikwaa"#, "OrgID");
     let sec_key: String = regreadvalue(r#"SOFTWARE\jikwaa"#, "SecKey");
 
