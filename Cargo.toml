@@ -2,13 +2,13 @@
 name = "op_agent"
 version = "0.7.2"
 authors = ["jikwaa"]
-edition = "2018"
+edition = "2021"
 build = "build.rs"
 publish = false
 
 [package.metadata.winres]
-OriginalFilename = "OP Agent.exe"
-LegalCopyright = "Copyright © 2021"
+OriginalFilename = "Jikwaa Agent.exe"
+LegalCopyright = "Copyright © 2022"
 FileDescription = "jikwaa Inventory Agent"
 CompanyName = "jikwaa"
 
