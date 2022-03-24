@@ -238,7 +238,7 @@ fn main() -> std::io::Result<()> {
         }
     else
         {
-        println!("ServerError : {}", resp.text()?);
+        panic!("ServerError : {}", resp.text()?);
         }
 
     Ok(())
