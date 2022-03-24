@@ -1,4 +1,5 @@
-#![windows_subsystem = "windows"]
+//#![windows_subsystem = "windows"]
+#![windows_subsystem = "console"] 
 
 extern crate winreg;
 extern crate serde_json;
