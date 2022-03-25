@@ -16,6 +16,7 @@ use std::collections::HashMap;
 struct DataXhange {
     FileVersion: u8,
     BitnessOS: String,
+    Jikwaa: Jikwaa,
     Machine: Machine,
     Windows: Windows,
     SystemInformation: SystemInformation,
@@ -30,6 +31,13 @@ struct Machine {
     MachineGuid: String, 
     ComputerName: String, 
     Domain: String, 
+    }
+
+#[derive(Serialize, Debug)]
+#[allow(non_snake_case)]
+struct Jikwaa {
+    OrgID: String, 
+    SecKey: String,
     }
 
 #[derive(Serialize, Debug)]
@@ -171,6 +179,10 @@ fn main() -> std::io::Result<()> {
     let myjson = DataXhange {
         FileVersion : 1 ,
         BitnessOS : os_bitness () ,
+        Jikwaa : Jikwaa {
+            OrgID: regreadvalue(r#"SOFTWARE\jikwaa"#, "OrgID") ,
+            SecKey: regreadvalue(r#"SOFTWARE\jikwaa"#, "SecKey") ,
+            } ,
         Machine : Machine {
             MachineGuid: regreadvalue(r#"SOFTWARE\Microsoft\Cryptography"#, "MachineGuid"), 
             ComputerName: regreadvalue(r#"SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName"#, "ComputerName"), 
