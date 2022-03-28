@@ -172,9 +172,6 @@ fn regreadvalue(regpath: &str, regvalue: &str) ->String {
 
 fn main() -> std::io::Result<()> {
 
-    let org_id: String = regreadvalue(r#"SOFTWARE\jikwaa"#, "OrgID");
-    let sec_key: String = regreadvalue(r#"SOFTWARE\jikwaa"#, "SecKey");
-
     //println!("{} : {}", org_id,sec_key);
     let myjson = DataXhange {
         FileVersion : 1 ,
@@ -237,8 +234,6 @@ fn main() -> std::io::Result<()> {
 
     let resp = attohttpc::post("https://jikwaa.net/api/1/inventory.php")
     //let resp = attohttpc::post("https://postman-echo.com/post")   // for testing
-        .param("OrgID", org_id)         // set a query parameter
-        .param("SecKey", sec_key)       // set a query parameter
         .json(&myjson)?                 // set the request body (json feature required)
         .send()?;                       // send the request
 
