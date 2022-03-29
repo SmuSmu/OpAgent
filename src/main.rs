@@ -1,6 +1,12 @@
 //#![windows_subsystem = "windows"]
 #![windows_subsystem = "console"] 
 
+#[cfg(debug_assertions)]
+static APIURL: &'static str = "http://localhost/api/1/inventory";
+
+#[cfg(not(debug_assertions))]
+static APIURL: &'static str = "https://jikwaa.net/api/1/inventory";
+
 extern crate winreg;
 extern crate serde_json;
 extern crate static_vcruntime; //https://users.rust-lang.org/t/static-vcruntime-distribute-windows-msvc-binaries-without-needing-to-deploy-vcruntime-dll/57599
@@ -172,7 +178,7 @@ fn regreadvalue(regpath: &str, regvalue: &str) ->String {
 
 fn main() -> std::io::Result<()> {
 
-    //println!("{} : {}", org_id,sec_key);
+    println!("API URL : {}", APIURL);
     let myjson = DataXhange {
         FileVersion : 1 ,
         BitnessOS : os_bitness () ,
@@ -232,8 +238,7 @@ fn main() -> std::io::Result<()> {
     //jsonfile.write_all(serde_json::to_string(&myjson).unwrap().as_bytes())?;
     jsonfile.write_all(serde_json::to_string_pretty(&myjson).unwrap().as_bytes())?;
 
-    let resp = attohttpc::post("http://localhost/api/1/inventory")
-    //let resp = attohttpc::post("https://postman-echo.com/post")   // for testing
+    let resp = attohttpc::post(APIURL)
         .json(&myjson)?                 // set the request body (json feature required)
         .send()?;                       // send the request
 
