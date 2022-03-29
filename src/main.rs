@@ -246,7 +246,10 @@ fn main() -> std::io::Result<()> {
     if resp.is_success()
         {
         // Consume the response body as text and print it.
-        println!("Output : {}", resp.text()?);
+        if cfg!(debug_assertions)
+            {
+            println!("Output : {}", resp.text()?);
+            }
         }
     else
         {
