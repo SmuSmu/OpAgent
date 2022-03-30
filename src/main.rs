@@ -176,9 +176,8 @@ fn regreadvalue(regpath: &str, regvalue: &str) ->String {
             }
         }
 
-fn main() -> std::io::Result<()> {
-
-    println!("API URL : {}", APIURL);
+fn main() -> std::io::Result<()>
+    {
     let myjson = DataXhange {
         FileVersion : 1 ,
         BitnessOS : os_bitness () ,
