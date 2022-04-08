@@ -228,10 +228,12 @@ fn main() -> std::io::Result<()>
             SystemSKU: regreadvalue(r#"SYSTEM\HardwareConfig\Current"#, "SystemSKU"),
             }
         };
-    
-    //println!("{}", serde_json::to_string(&myjson).unwrap());
-    let mut jsonfile = std::fs::File::create("output.json")?;
 
+    #[cfg(not(debug_assertions))]
+    let mut jsonfile = std::fs::File::create(std::env::temp_dir().display().to_string() + "output.json")?;
+
+    #[cfg(debug_assertions)]
+    let mut jsonfile = std::fs::File::create("output.json")?;
     
 
     //jsonfile.write_all(serde_json::to_string(&myjson).unwrap().as_bytes())?;
