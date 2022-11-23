@@ -34,6 +34,16 @@
         <Property Id="ORG_ID" Secure="yes" />
         <Property Id="SEC_KEY" Secure="yes" />
 
+        <Property Id="RSORG_ID">
+            <RegistrySearch Win64="$(var.Win64)" Id="ORG_ID_RegSearch" Root="HKLM" Key="SOFTWARE\jikwaa" Name="OrgID" Type="raw" />
+        </Property>
+        <Property Id="RSSEC_KEY">
+            <RegistrySearch Win64="$(var.Win64)" Id="SEC_KEY_RegSearch" Root="HKLM" Key="SOFTWARE\jikwaa" Name="SecKey" Type="raw" />
+        </Property>
+
+        <SetProperty Id="SEC_KEY" After="AppSearch" Value="[RSSEC_KEY]">NOT SEC_KEY</SetProperty>
+        <SetProperty Id="ORG_ID" After="AppSearch" Value="[RSORG_ID]">NOT ORG_ID</SetProperty>
+
         <Upgrade Id="$(var.ProductUpgradeCode)">
             <UpgradeVersion Minimum="$(var.ProductVersion)" OnlyDetect="yes" Property="NEWERVERSIONDETECTED" />
             <UpgradeVersion Minimum="0.0.0" Maximum="$(var.ProductVersion)" IncludeMinimum="yes" IncludeMaximum="no" Property="OLDERVERSIONBEINGUPGRADED" />
