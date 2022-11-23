@@ -56,7 +56,7 @@
                         <File Id="ApplicationFile1" Source="..\target\$(var.RustTarget)\release\op_agent.exe" />
                         <File Id="TaskXML" Source="assets\jikwaa-task.xml" />
                     </Component>
-                    <Component Id="RegistrySettings" Guid="*" Win64="$(var.Win64)">
+                    <Component Id="RegistrySettings" Guid="*" Win64="$(var.Win64)" Permanent="yes">
                         <RegistryValue Root="HKLM" Key="Software\jikwaa" Name="OrgID" Type="string" Value="[ORG_ID]" KeyPath="yes"/>
                         <RegistryValue Root="HKLM" Key="Software\jikwaa" Name="SecKey" Type="string" Value="[SEC_KEY]"/>
                     </Component>
