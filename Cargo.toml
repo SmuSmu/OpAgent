@@ -13,10 +13,10 @@ FileDescription = "jikwaa Inventory Agent"
 CompanyName = "jikwaa"
 
 [dependencies]
-winreg = "0.10.1"
+winreg = "0.51"
 serde = { version = "1.0.114", features = ["derive"] } 
 serde_json = "1.0.56" 
-attohttpc = { version = "0.24.0", features = ["json"] }
+attohttpc = { version = "0.26", features = ["json"] }
 bitness = "0.4.0"
 static_vcruntime = "2.0"
 
