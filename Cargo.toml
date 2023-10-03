@@ -8,7 +8,7 @@ publish = false
 
 [package.metadata.winres]
 OriginalFilename = "Jikwaa Agent.exe"
-LegalCopyright = "Copyright © 2022"
+LegalCopyright = "Copyright © 2023"
 FileDescription = "jikwaa Inventory Agent"
 CompanyName = "jikwaa"
 
